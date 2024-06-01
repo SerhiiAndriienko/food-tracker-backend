@@ -5,13 +5,14 @@ const { DB_HOST, PORT } = process.env
 mongoose.set('strictQuery', true)
 
 mongoose
-	.connect(DB_HOST)
+	.connect(DB_HOST, { useNewUrlParser: true, useUnifiedTopology: true })
 	.then(() => {
-		app.listen(PORT)
-		console.log(`Server  running. Use our API on port: ${PORT}`)
+		app.listen(PORT),
+			() => {
+				console.log(`Server running. Use our API on port: ${PORT}`)
+			}
 	})
 	.catch(err => {
-		console.error(err.message)
-
+		console.error('Database connection error:', err.message)
 		process.exit(1)
 	})
