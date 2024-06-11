@@ -7,13 +7,15 @@ async function getValue(req, res, next) {
 			today.getMonth() + 1
 		}-${today.getFullYear()}`
 		const docs = await Water.find({ date: formattedDate }).exec()
-		return res.send(docs)
+		docs[0]
+			? res.send({ value: docs[0].value, id: docs[0]._id })
+			: res.send({ value: 0, id: '' })
 	} catch (error) {
 		next(error)
 	}
 }
 
-async function addWater(req, res, next) {
+async function updateWater(req, res, next) {
 	const { id } = req.params
 	if (!mongoose.Types.ObjectId.isValid(id)) {
 		return res.status(400).send({
@@ -25,14 +27,13 @@ async function addWater(req, res, next) {
 	const formattedDate = `${today.getDate()}-${
 		today.getMonth() + 1
 	}-${today.getFullYear()}`
-	const waterValue = {
-		value: req.body.value,
-		date: formattedDate,
-	}
+	// const newWaterLevel =
+	const newValue = req.body.value
+
 	try {
 		const doc = await Water.findByIdAndUpdate(
 			id,
-			{ $set: waterValue },
+			{ $inc: { value: newValue }, $set: { date: formattedDate } },
 			{ new: true, upsert: true, useFindAndModify: false }
 		).exec()
 
@@ -41,10 +42,26 @@ async function addWater(req, res, next) {
 		next(error)
 	}
 }
+async function addWater(req, res, next) {
+	const { value } = req.params
+	const today = new Date()
+	const formattedDate = `${today.getDate()}-${
+		today.getMonth() + 1
+	}-${today.getFullYear()}`
 
+	try {
+		const waterValue = await Water.create({
+			value: value,
+			date: formattedDate,
+		})
+
+		return res.status(200).send(waterValue)
+	} catch (error) {
+		next(error)
+	}
+}
 async function removeValue(req, res, next) {
 	const { id } = req.params
-
 	try {
 		const doc = await Water.findByIdAndRemove(id).exec()
 		if (doc === null) {
@@ -56,4 +73,4 @@ async function removeValue(req, res, next) {
 	}
 }
 
-module.exports = { getValue, addWater, removeValue }
+module.exports = { getValue, addWater, removeValue, updateWater }
