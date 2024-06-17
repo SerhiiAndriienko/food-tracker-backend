@@ -2,13 +2,20 @@ const mongoose = require('mongoose')
 
 const daySchema = new mongoose.Schema(
 	{
-		date: Date,
-		water: Number,
-		weight: Number,
-		isChanged: {
-			type: Boolean,
-			default: false,
+		date: {
+			type: String,
+			required: true,
 		},
+		water: {
+			type: Number,
+			required: true,
+			default: 0,
+		},
+		// weight: Number,
+		// isChanged: {
+		// 	type: Boolean,
+		// 	default: false,
+		// },
 		breakfast: [
 			{
 				name: {
@@ -107,7 +114,9 @@ const daySchema = new mongoose.Schema(
 		],
 		ownerId: mongoose.Schema.ObjectId,
 	},
-	{ versionKey: false }
+	{
+		versionKey: false,
+	}
 )
 
 const Day = mongoose.model('day', daySchema)
