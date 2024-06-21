@@ -11,11 +11,11 @@ const daySchema = new mongoose.Schema(
 			required: true,
 			default: 0,
 		},
-		// weight: Number,
-		// isChanged: {
-		// 	type: Boolean,
-		// 	default: false,
-		// },
+		weight: { type: Number, required: true, default: 0 },
+		isChanged: {
+			type: Boolean,
+			default: false,
+		},
 		breakfast: [
 			{
 				name: {
